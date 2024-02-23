@@ -1,14 +1,25 @@
-import mysql.connector
+from connection import sql_connection
 
-cnx = mysql.connector.connect(user='root', password='Varma',
-                              host='127.0.0.1',
-                              database='gs.products')
-cursor = cnx.cursor()
+def get_all_products(connection):
 
-query = ("select * from gs.products")
+    cursor = connection.cursor()
 
-for (product_id, name, units_of_measure_id, price_per_unit) in cursor:
-    print(product_id, name, units_of_measure_id, price_per_unit)
+    query = "select * from gs.products"
+    cursor.execute(query)
 
-cnx.close()
+    response = []
+    for (product_id, name, units_of_measure_id, price_per_unit) in cursor:
+        response.append(
+            {
+                'product_id' : product_id,
+                'name':name,
+                'unit_of_measure_id': units_of_measure_id,
+                'price_per_unit':price_per_unit
+            }
+        )
 
+    connection.close()
+    return response
+if __name__ == "__main__":
+    connection = sql_connection()
+    print(get_all_products(connection))
